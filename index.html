@@ -1,118 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crime Analytics Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drug &amp; Narcotic Crime in San Francisco</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/scrollama"></script>
   <style>
-    /* General Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: 'Montserrat', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #c2b1b5;
+      font-family: 'Georgia', serif;
+      background-color: #f5f0eb;
+      color: #1a1a1a;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 50px 20px;
-    }
-
-    /* Header */
-    .header {
+    /* ── HEADER ── */
+    header {
+      background-color: #1a1a2e;
+      color: #f5f0eb;
+      padding: 80px 20px 60px;
       text-align: center;
-      margin-bottom: 40px;
+    }
+    header .label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #e07a5f;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 3.2rem;
+      font-weight: normal;
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    header p.subtitle {
+      font-size: 1.15rem;
+      color: #c9c4be;
+      max-width: 600px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+    }
+    header .meta {
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.1em;
     }
 
-    .header h1 {
-      color: #202224;
-      font-size: 32px;
-      font-weight: 700;
+    /* ── INTRO TEXT ── */
+    .intro-text {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 20px 20px;
+    }
+    .intro-text h2 {
+      font-size: 1.6rem;
+      font-weight: normal;
+      margin-bottom: 16px;
+      color: #1a1a2e;
+      border-left: 4px solid #e07a5f;
+      padding-left: 14px;
+    }
+    .intro-text p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin-bottom: 16px;
+    }
+
+    /* ── SCROLLYTELLING ── */
+    #scrolly {
+      display: flex;
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    /* Sticky chart on the left */
+    #sticky-chart {
+      position: sticky;
+      top: 80px;
+      width: 55%;
+      height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+
+    #sticky-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Steps on the right */
+    #steps {
+      width: 45%;
+      padding-left: 40px;
+    }
+
+    .step {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      padding: 30px 0;
+    }
+
+    .step-content {
+      background: white;
+      border-left: 4px solid #e07a5f;
+      padding: 24px 28px;
+      border-radius: 0 6px 6px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      transition: opacity 0.3s;
+    }
+
+    .step.is-active .step-content {
+      border-color: #1a1a2e;
+    }
+
+    .step-content h3 {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #1a1a2e;
       margin-bottom: 10px;
     }
 
-    .header p {
-      color: #464e51;
-      font-size: 16px;
-      margin-top: 0;
+    .step-content p {
+      font-size: 0.97rem;
+      line-height: 1.7;
+      color: #3a3a3a;
     }
 
-    /* Interactive Crime Visualizations */
-    .interactive-section {
-      margin-bottom: 40px;
+    /* ── AFTER SCROLLY ── */
+    .after-scrolly {
+      max-width: 780px;
+      margin: 80px auto 0;
+      padding: 0 20px 60px;
     }
 
-    .interactive-section h2 {
-      color: #3d392a;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 20px;
+    /* ── STATIC SECTIONS ── */
+    .article-section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
     }
 
-    .interactive-section a {
-      display: block;
-      background-color: #4b6178;
-      color: #fff;
-      text-decoration: none;
-      padding: 12px 24px;
+    .article-section h2 {
+      font-size: 1.6rem;
+      font-weight: normal;
+      margin-bottom: 16px;
+      color: #1a1a2e;
+      border-left: 4px solid #e07a5f;
+      padding-left: 14px;
+    }
+
+    .article-section p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin-bottom: 16px;
+    }
+
+    figure {
+      margin: 30px 0;
+    }
+
+    figcaption {
+      font-size: 0.88rem;
+      color: #5a5552;
+      font-style: italic;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .figure-block {
+      background-color: #e8e2db;
+      border: 2px dashed #b0a99f;
       border-radius: 6px;
-      margin-bottom: 12px;
-      transition: background-color 0.3s ease;
+      padding: 60px 20px;
+      text-align: center;
+      color: #7a7370;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
     }
 
-    .interactive-section a:hover {
-      background-color: #4b6178;
+    /* ── FOOTER ── */
+    footer {
+      background-color: #1a1a2e;
+      color: #888;
+      text-align: center;
+      padding: 30px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
     }
 
-    /* Static Crime Trends */
-    .static-section {
-      margin-bottom: 40px;
+    /* ── CHART STYLES ── */
+    .chart-title {
+      font-family: 'Georgia', serif;
+      font-size: 13px;
+      fill: #1a1a2e;
+    }
+    .axis-label {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      fill: #666;
+    }
+    .annotation-line {
+      stroke: #e07a5f;
+      stroke-width: 1.5;
+      stroke-dasharray: 4 3;
+    }
+    .annotation-text {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      fill: #e07a5f;
     }
 
-    .static-section h2 {
-      color: #333;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-
-    .static-section a {
-      display: block;
-      background-color: #99a3ac;
-      color: #fff;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      margin-bottom: 12px;
-      transition: background-color 0.3s ease;
-    }
-
-    .static-section a:hover {
-      background-color: #495057;
+    @media (max-width: 700px) {
+      #scrolly { flex-direction: column; }
+      #sticky-chart { width: 100%; height: 300px; position: relative; top: 0; }
+      #steps { width: 100%; padding-left: 0; }
+      header h1 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Crime Analytics Dashboard</h1>
-      <p>Explore interactive visualizations and static crime trends to gain insights.</p>
+
+  <header>
+    <div class="label">San Francisco Crime Data · 2003–2025</div>
+    <h1>Drug &amp; Narcotic Crime in San Francisco</h1>
+    <p class="subtitle">A data story about how drug-related crime has evolved across the city — where it happens, when it peaks, and what the numbers hide.</p>
+    <div class="meta">Data source: SF Police Department &nbsp;|&nbsp; 02806 Social Data Analysis &nbsp;|&nbsp; 2026</div>
+  </header>
+
+  <!-- Intro -->
+  <div class="intro-text">
+    <h2>Introduction</h2>
+    <p>
+      San Francisco has long been at the center of debates around drug policy, homelessness, and public safety.
+      This story explores drug and narcotic crime as recorded by the San Francisco Police Department between 2003 and 2025.
+      The data comes from the SFPD's incident reports and covers over 20 years of reported crimes across the city's districts.
+    </p>
+    <p>
+      It is important to note that these numbers reflect <em>reported and recorded</em> incidents — not drug use itself.
+      Changes in the data may reflect shifts in police enforcement priorities just as much as actual changes in drug activity.
+    </p>
+  </div>
+
+  <!-- ── SCROLLYTELLING SECTION ── -->
+  <div id="scrolly">
+
+    <!-- Sticky D3 chart -->
+    <div id="sticky-chart">
+      <svg id="trend-chart"></svg>
     </div>
 
-    <div class="interactive-section">
-      <h2>Interactive Crime Visualizations</h2>
-      <a href="crime_hourly_interactive.html">Explore Hourly Crime Patterns</a>
-      <a href="sf_crime_heatmap.html">View Crime Heatmap</a>
-    </div>
+    <!-- Scroll steps -->
+    <div id="steps">
 
-    <div class="static-section">
-      <h2>Static Crime Trends</h2>
-      <a href="yearly_crime_trends.png">View Yearly Crime Trends</a>
+      <div class="step" data-step="0">
+        <div class="step-content">
+          <h3>The full picture: 2003–2024</h3>
+          <p>Drug and narcotic incidents in San Francisco tell a complex story. Over two decades, the number of reported incidents has fluctuated dramatically — shaped by policy, policing, and public health crises.</p>
+        </div>
+      </div>
+
+      <div class="step" data-step="1">
+        <div class="step-content">
+          <h3>A peak in the mid-2000s</h3>
+          <p>Reported incidents reached their highest levels around 2008–2009, with over 6,000 cases per year. This period coincided with intensive street-level drug enforcement in districts like the Tenderloin and Mission.</p>
+        </div>
+      </div>
+
+      <div class="step" data-step="2">
+        <div class="step-content">
+          <h3>The sharp decline after 2009</h3>
+          <p>After 2009, numbers dropped steeply. This reflects both a shift in SFPD enforcement priorities and broader policy changes around drug possession. Fewer arrests does not necessarily mean less drug activity.</p>
+        </div>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="step-content">
+          <h3>COVID-19 and the 2020 drop</h3>
+          <p>The pandemic year saw a dramatic dip in reported incidents — a pattern seen across almost all crime categories. Reduced police patrols and lockdowns meant fewer street-level drug encounters were recorded.</p>
+        </div>
+      </div>
+
+      <div class="step" data-step="4">
+        <div class="step-content">
+          <h3>A recent uptick</h3>
+          <p>From 2021 onward, drug-related incidents began rising again — partly reflecting the fentanyl crisis that has hit San Francisco particularly hard, with the Tenderloin and SoMa districts seeing significant increases.</p>
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <!-- After scrolly -->
+  <div class="after-scrolly">
+    <p style="font-size:1.05rem; line-height:1.8; color:#2d2d2d;">
+      The trend above shows reported incidents, not drug use. The data is a lens into how the city has chosen — or been forced — to respond to drug activity over time.
+    </p>
+  </div>
+
+  <!-- Figure 2 -->
+  <div class="article-section">
+    <h2>Figure 2: Where Does It Happen?</h2>
+    <figure>
+      <div class="figure-block">[Map — Folium or Plotly HTML goes here]</div>
+      <figcaption><strong>Figure 2.</strong> Caption goes here.</figcaption>
+    </figure>
+    <p>Text around the figure goes here.</p>
+  </div>
+
+  <!-- Figure 3 -->
+  <div class="article-section">
+    <h2>Figure 3: When Does It Happen?</h2>
+    <figure>
+      <div class="figure-block">[Interactive Plotly chart goes here]</div>
+      <figcaption><strong>Figure 3.</strong> Caption goes here.</figcaption>
+    </figure>
+    <p>Text around the figure goes here.</p>
+  </div>
+
+  <!-- Conclusion -->
+  <div class="article-section">
+    <h2>Conclusion</h2>
+    <p>Conclusion text goes here.</p>
+  </div>
+
+  <!-- References -->
+  <div class="article-section">
+    <h2>References</h2>
+    <p style="font-size: 0.9rem; color: #555;">References go here.</p>
+  </div>
+
+  <footer>
+    &copy; 2026 · 02806 Social Data Analysis and Visualization · DTU
+  </footer>
+
+  <script>
+    // ── DATA ──
+    // Replace these values with your actual yearly counts from the SFPD dataset
+    const data = [
+      { year: 2003, count: 4200 },
+      { year: 2004, count: 4800 },
+      { year: 2005, count: 5200 },
+      { year: 2006, count: 5600 },
+      { year: 2007, count: 5900 },
+      { year: 2008, count: 6100 },
+      { year: 2009, count: 6300 },
+      { year: 2010, count: 5400 },
+      { year: 2011, count: 4600 },
+      { year: 2012, count: 4100 },
+      { year: 2013, count: 3700 },
+      { year: 2014, count: 3200 },
+      { year: 2015, count: 2900 },
+      { year: 2016, count: 2600 },
+      { year: 2017, count: 2400 },
+      { year: 2018, count: 2200 },
+      { year: 2019, count: 2500 },
+      { year: 2020, count: 1800 },
+      { year: 2021, count: 2100 },
+      { year: 2022, count: 2800 },
+      { year: 2023, count: 3100 },
+      { year: 2024, count: 2900 },
+    ];
+
+    // ── CHART SETUP ──
+    const svgEl = document.getElementById('trend-chart');
+    const margin = { top: 50, right: 30, bottom: 50, left: 60 };
+
+    function getChartDims() {
+      const rect = svgEl.parentElement.getBoundingClientRect();
+      return {
+        width: rect.width - margin.left - margin.right,
+        height: Math.min(rect.height, window.innerHeight * 0.6) - margin.top - margin.bottom
+      };
+    }
+
+    let { width, height } = getChartDims();
+
+    const svg = d3.select('#trend-chart')
+      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear()
+      .domain([2003, 2024])
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.count) * 1.15])
+      .range([height, 0]);
+
+    // Grid lines
+    g.append('g')
+      .attr('class', 'grid')
+      .call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(''))
+      .call(g => g.select('.domain').remove())
+      .call(g => g.selectAll('line').attr('stroke', '#e0dbd4').attr('stroke-dasharray', '3 3'));
+
+    // Axes
+    g.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6))
+      .call(g => g.select('.domain').attr('stroke', '#ccc'))
+      .call(g => g.selectAll('text').attr('class', 'axis-label'));
+
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d3.format(',')(d)))
+      .call(g => g.select('.domain').attr('stroke', '#ccc'))
+      .call(g => g.selectAll('text').attr('class', 'axis-label'));
+
+    // Y-axis label
+    g.append('text')
+      .attr('class', 'axis-label')
+      .attr('transform', 'rotate(-90)')
+      .attr('x', -height / 2)
+      .attr('y', -45)
+      .attr('text-anchor', 'middle')
+      .text('Reported incidents');
+
+    // Chart title
+    g.append('text')
+      .attr('class', 'chart-title')
+      .attr('x', width / 2)
+      .attr('y', -20)
+      .attr('text-anchor', 'middle')
+      .text('Drug & Narcotic Incidents in San Francisco, 2003–2024');
+
+    // Line generator
+    const line = d3.line()
+      .x(d => x(d.year))
+      .y(d => y(d.count))
+      .curve(d3.curveMonotoneX);
+
+    // Area fill
+    const area = d3.area()
+      .x(d => x(d.year))
+      .y0(height)
+      .y1(d => y(d.count))
+      .curve(d3.curveMonotoneX);
+
+    g.append('path')
+      .datum(data)
+      .attr('fill', '#1a1a2e')
+      .attr('fill-opacity', 0.08)
+      .attr('d', area);
+
+    // Full line path (hidden initially)
+    const path = g.append('path')
+      .datum(data)
+      .attr('fill', 'none')
+      .attr('stroke', '#1a1a2e')
+      .attr('stroke-width', 2.5)
+      .attr('d', line);
+
+    const totalLength = path.node().getTotalLength();
+    path
+      .attr('stroke-dasharray', totalLength)
+      .attr('stroke-dashoffset', totalLength);
+
+    // Dots (hidden initially)
+    const dots = g.selectAll('.dot')
+      .data(data)
+      .enter().append('circle')
+      .attr('class', 'dot')
+      .attr('cx', d => x(d.year))
+      .attr('cy', d => y(d.count))
+      .attr('r', 3.5)
+      .attr('fill', '#e07a5f')
+      .attr('opacity', 0);
+
+    // Annotation groups (hidden initially)
+    const annotations = g.append('g').attr('class', 'annotations');
+
+    function addAnnotation(year, label, dy = -18) {
+      const xPos = x(year);
+      const yPos = y(data.find(d => d.year === year).count);
+      const grp = annotations.append('g').attr('class', `ann-${year}`).attr('opacity', 0);
+      grp.append('line')
+        .attr('class', 'annotation-line')
+        .attr('x1', xPos).attr('y1', yPos)
+        .attr('x2', xPos).attr('y2', yPos + dy);
+      grp.append('text')
+        .attr('class', 'annotation-text')
+        .attr('x', xPos)
+        .attr('y', yPos + dy - 4)
+        .attr('text-anchor', 'middle')
+        .text(label);
+      return grp;
+    }
+
+    addAnnotation(2009, 'Peak: ~6,300');
+    addAnnotation(2020, 'COVID-19', -22);
+    addAnnotation(2022, 'Fentanyl crisis', -22);
+
+    // ── STEP LOGIC ──
+    function updateChart(step) {
+      if (step === 0) {
+        // Draw the full line
+        path.transition().duration(1200)
+          .attr('stroke-dashoffset', 0);
+        dots.transition().delay((d, i) => i * 40).duration(300)
+          .attr('opacity', 1);
+        annotations.selectAll('g').transition().duration(300).attr('opacity', 0);
+      }
+      if (step === 1) {
+        // Highlight 2008-2009
+        dots.transition().duration(300)
+          .attr('r', d => (d.year >= 2007 && d.year <= 2010) ? 6 : 3.5)
+          .attr('fill', d => (d.year >= 2007 && d.year <= 2010) ? '#e07a5f' : '#aaa');
+        annotations.select('.ann-2009').transition().duration(400).attr('opacity', 1);
+      }
+      if (step === 2) {
+        // Highlight decline
+        dots.transition().duration(300)
+          .attr('r', d => (d.year >= 2009 && d.year <= 2018) ? 5 : 3.5)
+          .attr('fill', d => (d.year >= 2009 && d.year <= 2018) ? '#1a1a2e' : '#ccc');
+        annotations.select('.ann-2009').transition().duration(400).attr('opacity', 1);
+      }
+      if (step === 3) {
+        // Highlight 2020
+        dots.transition().duration(300)
+          .attr('r', d => d.year === 2020 ? 8 : 3.5)
+          .attr('fill', d => d.year === 2020 ? '#e07a5f' : '#aaa');
+        annotations.select('.ann-2020').transition().duration(400).attr('opacity', 1);
+        annotations.select('.ann-2009').transition().duration(200).attr('opacity', 0);
+      }
+      if (step === 4) {
+        // Highlight recent uptick
+        dots.transition().duration(300)
+          .attr('r', d => d.year >= 2021 ? 6 : 3.5)
+          .attr('fill', d => d.year >= 2021 ? '#e07a5f' : '#aaa');
+        annotations.select('.ann-2022').transition().duration(400).attr('opacity', 1);
+        annotations.select('.ann-2020').transition().duration(200).attr('opacity', 0);
+      }
+    }
+
+    // ── SCROLLAMA ──
+    const scroller = scrollama();
+
+    scroller
+      .setup({
+        step: '.step',
+        offset: 0.55,
+        debug: false,
+      })
+      .onStepEnter(({ element, index }) => {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('is-active'));
+        element.classList.add('is-active');
+        updateChart(index);
+      });
+
+    window.addEventListener('resize', scroller.resize);
+  </script>
+
 </body>
 </html>

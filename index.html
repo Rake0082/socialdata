@@ -311,54 +311,62 @@
     </p>
   </div>
 
-  <!-- Figure 2 -->
-  <div class="article-section">
+  <!-- Figure 2: Scrollytelling map -->
+  <div class="intro-text" style="padding-bottom: 0;">
     <h2>Figure 2: Where Does It Happen?</h2>
-    <figure>
+  </div>
+
+  <div id="scrolly-map" style="display:flex; gap:0; max-width:1100px; margin:0 auto; padding:0 20px; position:relative;">
+
+    <div id="sticky-map" style="position:sticky; top:80px; width:55%; height:calc(100vh - 160px); display:flex; flex-direction:column; align-items:stretch; justify-content:center; flex-shrink:0; align-self:flex-start;">
       <iframe
+        id="district-map-iframe"
         src="drug_district_ratio_map.html"
         width="100%"
-        height="520"
+        height="100%"
         style="border:none; border-radius:6px; display:block;"
-        loading="lazy"
       ></iframe>
-      <figcaption>
-        <strong>Figure 2a.</strong> Drug &amp; narcotic crime ratio by SF police district.
-        Values above 1 mean the district has a higher share of drug crime than the city average;
-        values below 1 mean under-represented. The Tenderloin stands out dramatically with a ratio
-        of 4.3 — more than four times the citywide average.
-      </figcaption>
-    </figure>
-    <p>
-      The map reveals a stark geographic concentration of drug-related policing.
-      The Tenderloin district dominates with a ratio of 4.3, reflecting its long history as the
-      epicenter of open drug markets in San Francisco. The Mission (1.4) and Southern (1.1) districts
-      also exceed the city average, while Richmond, Central, and Taraval sit well below it.
-      This uneven distribution may reflect both genuine differences in drug activity and disparities
-      in how intensively different neighborhoods are policed.
-    </p>
-    <p>
-      But district-level data can obscure just as much as it reveals. The Tenderloin is a small,
-      dense neighborhood — and looking at individual incident locations tells an even sharper story.
-      The heatmap below shows all drug and narcotic incidents as a density layer, first across the
-      full city, then zoomed into the Tenderloin itself.
-    </p>
-    <figure>
-      <iframe
-        src="sf_crime_heatmap.html"
-        width="100%"
-        height="900"
-        style="border:none; border-radius:6px; display:block;"
-        loading="lazy"
-      ></iframe>
-      <figcaption>
-        <strong>Figure 2b.</strong> Heatmap of drug &amp; narcotic incident locations across San Francisco (top)
-        and zoomed into the Tenderloin district (bottom). The density of incidents in a few concentrated
-        street blocks — particularly around Turk Street and Eddy Street — is striking. This street-level
-        concentration suggests that drug enforcement is not just a district-wide phenomenon, but is focused
-        on a small number of specific locations within an already high-activity neighborhood.
-      </figcaption>
-    </figure>
+    </div>
+
+    <div id="map-steps" style="width:45%; padding-left:40px;">
+
+      <div class="step" data-mapstep="0">
+        <div class="step-content">
+          <h3>The city as a whole</h3>
+          <p>Across all 10 police districts, drug and narcotic crime is not evenly distributed.
+          The map shows each district's ratio compared to the city average — values above 1 mean
+          a disproportionately high share of drug incidents.</p>
+        </div>
+      </div>
+
+      <div class="step" data-mapstep="1">
+        <div class="step-content">
+          <h3>The Tenderloin stands out</h3>
+          <p>With a ratio of 4.3, the Tenderloin has more than four times the citywide average share
+          of drug incidents. No other district comes close. The Mission (1.4) and Southern (1.1)
+          districts also exceed average, but the gap with the Tenderloin is stark.</p>
+        </div>
+      </div>
+
+      <div class="step" data-mapstep="2">
+        <div class="step-content">
+          <h3>A small neighborhood, an outsized presence</h3>
+          <p>The Tenderloin is one of San Francisco's smallest districts by area — yet it
+          accounts for a disproportionate share of all drug-related policing. Whether this
+          reflects genuine concentration of drug activity or concentrated enforcement is
+          a question the data alone cannot answer.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="after-scrolly">
+    <figcaption style="font-size:0.88rem; color:#5a5552; font-style:italic; line-height:1.5;">
+      <strong>Figure 2.</strong> Drug &amp; narcotic crime ratio by SF police district (2003–2024).
+      Values above 1 indicate a district's share exceeds the citywide average; values below 1 indicate under-representation.
+      Scroll to zoom into the Tenderloin district.
+    </figcaption>
   </div>
 
   <!-- Figure 3 -->
@@ -621,6 +629,42 @@
       });
 
     window.addEventListener('resize', scroller.resize);
+
+    // ── MAP SCROLLYTELLING ──
+    const mapIframe = document.getElementById('district-map-iframe');
+    const mapDivId = '96b85cb1-c223-4e56-b125-eb6c3bf3a39d';
+
+    function updateMap(step) {
+      const pw = mapIframe.contentWindow;
+      if (!pw || !pw.Plotly) return;
+      if (step === 0) {
+        pw.Plotly.relayout(mapDivId, {
+          'geo.lataxis.range': [37.70, 37.84],
+          'geo.lonaxis.range': [-122.53, -122.36]
+        });
+      } else if (step === 1 || step === 2) {
+        pw.Plotly.relayout(mapDivId, {
+          'geo.lataxis.range': [37.768, 37.800],
+          'geo.lonaxis.range': [-122.430, -122.395]
+        });
+      }
+    }
+
+    const mapScroller = scrollama();
+    mapScroller
+      .setup({
+        step: '#map-steps .step',
+        offset: 0.55,
+        debug: false,
+      })
+      .onStepEnter(({ element, index }) => {
+        document.querySelectorAll('#map-steps .step').forEach(s => s.classList.remove('is-active'));
+        element.classList.add('is-active');
+        mapIframe.addEventListener('load', () => updateMap(index), { once: true });
+        updateMap(index);
+      });
+
+    window.addEventListener('resize', mapScroller.resize);
   </script>
 
 </body>

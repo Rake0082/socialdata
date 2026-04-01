@@ -633,35 +633,44 @@
     // ── MAP SCROLLYTELLING ──
     const mapIframe = document.getElementById('district-map-iframe');
     const mapDivId = '96b85cb1-c223-4e56-b125-eb6c3bf3a39d';
+    let mapReady = false;
+    let pendingStep = null;
 
-    function updateMap(step) {
+    function applyMapStep(step) {
       const pw = mapIframe.contentWindow;
       if (!pw || !pw.Plotly) return;
       if (step === 0) {
         pw.Plotly.relayout(mapDivId, {
-          'geo.lataxis.range': [37.70, 37.84],
-          'geo.lonaxis.range': [-122.53, -122.36]
+          'geo.center': { lat: 37.77, lon: -122.44 },
+          'geo.projection.scale': 5
         });
-      } else if (step === 1 || step === 2) {
+      } else {
         pw.Plotly.relayout(mapDivId, {
-          'geo.lataxis.range': [37.768, 37.800],
-          'geo.lonaxis.range': [-122.430, -122.395]
+          'geo.center': { lat: 37.784, lon: -122.413 },
+          'geo.projection.scale': 50
         });
       }
     }
+
+    mapIframe.addEventListener('load', () => {
+      mapReady = true;
+      if (pendingStep !== null) applyMapStep(pendingStep);
+    });
 
     const mapScroller = scrollama();
     mapScroller
       .setup({
         step: '#map-steps .step',
         offset: 0.55,
-        debug: false,
       })
       .onStepEnter(({ element, index }) => {
         document.querySelectorAll('#map-steps .step').forEach(s => s.classList.remove('is-active'));
         element.classList.add('is-active');
-        mapIframe.addEventListener('load', () => updateMap(index), { once: true });
-        updateMap(index);
+        if (mapReady) {
+          applyMapStep(index);
+        } else {
+          pendingStep = index;
+        }
       });
 
     window.addEventListener('resize', mapScroller.resize);

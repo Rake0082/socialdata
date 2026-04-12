@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drug &amp; Narcotic Crime in San Francisco</title>
+  <title>Vision Zero — NYC Traffic Safety, 2012–2025</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/scrollama"></script>
   <style>
@@ -72,6 +72,39 @@
       margin-bottom: 16px;
     }
 
+    /* ── STAT CALLOUTS ── */
+    .stat-row {
+      display: flex;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 140px;
+      background: white;
+      border-top: 4px solid #e07a5f;
+      padding: 20px;
+      border-radius: 0 0 6px 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+    .stat-box .number {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #1a1a2e;
+      font-family: 'Courier New', monospace;
+    }
+    .stat-box .stat-label {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.4;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
     /* ── SCROLLYTELLING ── */
     #scrolly {
       display: flex;
@@ -82,7 +115,6 @@
       position: relative;
     }
 
-    /* Sticky chart on the left */
     #sticky-chart {
       position: sticky;
       top: 80px;
@@ -100,7 +132,6 @@
       height: 100%;
     }
 
-    /* Steps on the right */
     #steps {
       width: 45%;
       padding-left: 40px;
@@ -181,17 +212,6 @@
       line-height: 1.5;
     }
 
-    .figure-block {
-      background-color: #e8e2db;
-      border: 2px dashed #b0a99f;
-      border-radius: 6px;
-      padding: 60px 20px;
-      text-align: center;
-      color: #7a7370;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-    }
-
     /* ── FOOTER ── */
     footer {
       background-color: #1a1a2e;
@@ -223,83 +243,105 @@
       font-size: 10px;
       fill: #e07a5f;
     }
+    .vz-band {
+      fill: #e07a5f;
+      fill-opacity: 0.06;
+    }
 
     @media (max-width: 700px) {
       #scrolly { flex-direction: column; }
       #sticky-chart { width: 100%; height: 300px; position: relative; top: 0; }
       #steps { width: 100%; padding-left: 0; }
       header h1 { font-size: 2rem; }
+      .stat-row { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="label">San Francisco Crime Data · 2003–2024</div>
-    <h1>Drug &amp; Narcotic Crime in San Francisco</h1>
-    <p class="subtitle">A data story about how drug-related crime has evolved across the city — where it happens, when it peaks, and what the numbers hide.</p>
-    <div class="meta">Data source: SF Police Department &nbsp;|&nbsp; 02806 Social Data Analysis &nbsp;|&nbsp; 2026</div>
+    <div class="label">NYC Motor Vehicle Collision Data · 2012–2025</div>
+    <h1>Did New York City Keep Its Promise?</h1>
+    <p class="subtitle">In 2014, New York City launched Vision Zero — a pledge to eliminate all traffic deaths. Over a decade later, the data tells a complicated story.</p>
+    <div class="meta">Data source: NYC Open Data — Motor Vehicle Collisions &nbsp;|&nbsp; 02806 Social Data Analysis &nbsp;|&nbsp; 2026</div>
   </header>
 
   <!-- Intro -->
   <div class="intro-text">
     <h2>Introduction</h2>
     <p>
-      San Francisco has long been at the center of debates around drug policy, homelessness, and public safety.
-      This story explores drug and narcotic crime as recorded by the San Francisco Police Department between 2003 and 2024.
-      The data comes from SFPD incident reports — official records filed each time an officer records a drug-related event —
-      and covers over two decades of policing across the city's 10 districts.
+      On January 1st, 2014, New York City Mayor Bill de Blasio launched Vision Zero — an ambitious initiative
+      borrowed from Sweden, with a simple but radical premise: <em>no traffic death is acceptable</em>.
+      The city committed to redesigning streets, lowering speed limits, and intensifying enforcement,
+      all in pursuit of a single goal: zero fatalities.
     </p>
     <p>
-      It is important to note that these numbers reflect <em>reported and recorded</em> incidents — not drug use itself.
-      Changes in the data may reflect shifts in police enforcement priorities just as much as actual changes in drug activity.
-      A drop in incidents does not mean drugs disappeared; it may simply mean fewer officers were looking.
+      This story draws on over 2.2 million crash records from NYC Open Data, spanning July 2012 to early 2026.
+      Every crash reported to the NYPD is in this dataset — from minor fender-benders to fatal collisions.
+      We focus on what matters most: did people die, and has that number gone down?
     </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="number">2.2M</div>
+        <div class="stat-label">Total crashes<br>2012–2025</div>
+      </div>
+      <div class="stat-box">
+        <div class="number">3,523</div>
+        <div class="stat-label">People killed<br>in traffic</div>
+      </div>
+      <div class="stat-box">
+        <div class="number">735K</div>
+        <div class="stat-label">People injured<br>in traffic</div>
+      </div>
+      <div class="stat-box">
+        <div class="number">288</div>
+        <div class="stat-label">Cyclists<br>killed</div>
+      </div>
+    </div>
   </div>
 
   <!-- ── SCROLLYTELLING SECTION ── -->
   <div id="scrolly">
 
-    <!-- Sticky D3 chart -->
     <div id="sticky-chart">
       <svg id="trend-chart"></svg>
     </div>
 
-    <!-- Scroll steps -->
     <div id="steps">
 
       <div class="step" data-step="0">
         <div class="step-content">
-          <h3>The full picture: 2003–2024</h3>
-          <p>Drug and narcotic incidents in San Francisco tell a complex story. Over two decades, the number of reported incidents has fluctuated dramatically — shaped by policy, policing, and public health crises.</p>
+          <h3>14 years of traffic deaths in New York City</h3>
+          <p>Between 2012 and 2025, 3,523 people were killed in traffic crashes across New York City's five boroughs. The trend is not a straight line — it bends, dips, and rises again in ways that reflect policy, pandemic, and human behaviour.</p>
         </div>
       </div>
 
       <div class="step" data-step="1">
         <div class="step-content">
-          <h3>A peak in the mid-2000s</h3>
-          <p>Reported incidents reached their highest levels around 2008–2009, with over 6,000 cases per year. This period coincided with intensive street-level drug enforcement in districts like the Tenderloin and Mission.</p>
+          <h3>The baseline: before Vision Zero (2012–2013)</h3>
+          <p>In the two years before Vision Zero, New York City recorded between 270 and 300 traffic deaths per year. Pedestrians accounted for the majority — over half — of all fatalities. These numbers set the bar that Vision Zero promised to drive to zero.</p>
         </div>
       </div>
 
       <div class="step" data-step="2">
         <div class="step-content">
-          <h3>The sharp decline after 2009</h3>
-          <p>After 2009, numbers dropped steeply. This reflects both a shift in SFPD enforcement priorities and broader policy changes around drug possession. Fewer arrests does not necessarily mean less drug activity.</p>
+          <h3>Vision Zero launches — and it works, at first</h3>
+          <p>From 2014 onward, the death toll began falling steadily. The city lowered the default speed limit from 30 to 25 mph, redesigned dozens of dangerous intersections, and ramped up speeding enforcement. By 2019, NYC recorded its lowest traffic death count since records began — a genuine, measurable success.</p>
         </div>
       </div>
 
       <div class="step" data-step="3">
         <div class="step-content">
-          <h3>COVID-19 and the 2020 drop</h3>
-          <p>The pandemic year saw a dramatic dip in reported incidents — a pattern seen across almost all crime categories. Reduced police patrols and lockdowns meant fewer street-level drug encounters were recorded.</p>
+          <h3>COVID-19 changes everything (2020)</h3>
+          <p>The pandemic emptied New York's streets almost overnight. Total crashes dropped sharply — but fatalities did not fall proportionally. With fewer cars and no congestion, speeds rose dramatically, and the crashes that did happen were more deadly. 2020 saw a sharp reversal in the decade's downward trend.</p>
         </div>
       </div>
 
       <div class="step" data-step="4">
         <div class="step-content">
-          <h3>A recent uptick</h3>
-          <p>From 2021 onward, drug-related incidents began rising again — partly reflecting the fentanyl crisis that has hit San Francisco particularly hard, with the Tenderloin and SoMa districts seeing significant increases.</p>
+          <h3>The promise stalls — still far from zero</h3>
+          <p>Since 2021, traffic deaths have stabilised — but at a level far above zero. The progress of the 2010s has not been recovered. Over a decade after the Vision Zero pledge, New York City still loses more than 200 people a year to traffic violence. The promise remains unfinished.</p>
         </div>
       </div>
 
@@ -309,13 +351,14 @@
   <!-- After scrolly -->
   <div class="after-scrolly">
     <p style="font-size:1.05rem; line-height:1.8; color:#2d2d2d;">
-      The trend above shows reported incidents, not drug use. The data is a lens into how the city has chosen — or been forced — to respond to drug activity over time.
+      The decline from 2014 to 2019 is real and significant — Vision Zero's infrastructure and enforcement changes saved lives.
+      But the gains have since stalled, and the city remains far from its founding promise.
     </p>
   </div>
 
-  <!-- Figure 2: Scrollytelling map -->
+  <!-- Figure 2: Map scrollytelling -->
   <div class="intro-text" style="padding-bottom: 0;">
-    <h2>Figure 2: Where Does It Happen?</h2>
+    <h2>Figure 2: Where Do People Die?</h2>
   </div>
 
   <div id="scrolly-map" style="display:flex; gap:0; max-width:1100px; margin:0 auto; padding:0 20px; position:relative;">
@@ -323,15 +366,15 @@
     <div id="sticky-map" style="position:sticky; top:80px; width:55%; height:calc(100vh - 160px); flex-shrink:0; align-self:flex-start;">
       <div style="position:relative; width:100%; height:100%;">
         <iframe
-          id="map-sf"
-          src="drug_district_ratio_map.html"
+          id="map-overview"
+          src="nyc_borough_fatalities_map.html"
           width="100%"
           height="100%"
           style="border:none; border-radius:6px; position:absolute; top:0; left:0; transition: opacity 0.6s ease;"
         ></iframe>
         <iframe
-          id="map-tenderloin"
-          src="drug_district_map_tenderloin.html"
+          id="map-heatmap"
+          src="nyc_fatal_heatmap.html"
           width="100%"
           height="100%"
           style="border:none; border-radius:6px; position:absolute; top:0; left:0; opacity:0; transition: opacity 0.6s ease;"
@@ -343,29 +386,30 @@
 
       <div class="step" data-mapstep="0">
         <div class="step-content">
-          <h3>The city as a whole</h3>
-          <p>Across all 10 police districts, drug and narcotic crime is not evenly distributed.
-          The map shows each district's ratio compared to the city average — values above 1 mean
-          a disproportionately high share of drug incidents.</p>
+          <h3>Not all boroughs are equal</h3>
+          <p>Traffic fatalities are not evenly distributed across New York City's five boroughs.
+          Brooklyn and Queens account for the largest absolute numbers — but when adjusted for population
+          and traffic volume, the picture shifts. The map shows total fatalities per borough over the full period.</p>
         </div>
       </div>
 
       <div class="step" data-mapstep="1">
         <div class="step-content">
-          <h3>The Tenderloin stands out</h3>
-          <p>With a ratio of 4.3, the Tenderloin has more than four times the citywide average share
-          of drug incidents. No other district comes close. The Mission (1.4) and Southern (1.1)
-          districts also exceed average, but the gap with the Tenderloin is stark.</p>
+          <h3>The deadliest streets</h3>
+          <p>Zoom into the crash-level data and patterns emerge around specific corridors —
+          major arterials like Atlantic Avenue, Queens Boulevard (long nicknamed the "Boulevard of Death"),
+          and stretches of the Bronx. These are the streets where Vision Zero's redesign
+          investments have been concentrated — and where the most lives are still being lost.</p>
         </div>
       </div>
 
       <div class="step" data-mapstep="2">
         <div class="step-content">
-          <h3>A small neighborhood, an outsized presence</h3>
-          <p>The Tenderloin is one of San Francisco's smallest districts by area — yet it
-          accounts for a disproportionate share of all drug-related policing. Whether this
-          reflects genuine concentration of drug activity or concentrated enforcement is
-          a question the data alone cannot answer.</p>
+          <h3>A city of unequal risk</h3>
+          <p>The geographic concentration of traffic deaths follows familiar patterns.
+          Lower-income neighbourhoods bear a disproportionate share of traffic fatalities —
+          a pattern documented in Vision Zero's own equity reports,
+          and one the initiative has struggled to fully address.</p>
         </div>
       </div>
 
@@ -374,36 +418,35 @@
 
   <div class="after-scrolly">
     <figcaption style="font-size:0.88rem; color:#5a5552; font-style:italic; line-height:1.5;">
-      <strong>Figure 2.</strong> Drug &amp; narcotic crime ratio by SF police district (2003–2024).
-      Values above 1 indicate a district's share exceeds the citywide average; values below 1 indicate under-representation.
-      Scroll to zoom into the Tenderloin district.
+      <strong>Figure 2.</strong> Left: total traffic fatalities by borough, 2012–2025.
+      Right: heatmap of individual fatal crash locations across NYC.
+      Scroll to switch between the borough overview and the street-level heatmap.
     </figcaption>
   </div>
 
-  <!-- Figure 3 -->
+  <!-- Figure 3: Who is most at risk? -->
   <div class="article-section">
-    <h2>Figure 3: Which Districts Drove the Trend?</h2>
+    <h2>Figure 3: Who Bears the Risk?</h2>
     <p>
-      The overall decline after 2009 and the recent fentanyl-driven uptick did not affect all districts equally.
-      Toggle between absolute counts and share of total to see how the Tenderloin's dominance has actually
-      <em>grown</em> over time — even as the city's total numbers fell. The Mission and Southern districts
-      follow a broadly similar arc, but no district comes close to the Tenderloin's trajectory.
-      Click any district in the legend to hide or highlight it.
+      Not everyone faces the same danger on New York City's streets. Pedestrians account for
+      the largest share of traffic fatalities — consistently over half of all deaths in most years.
+      Cyclists, though fewer in number, face a disproportionate risk relative to their share of road users.
+      Motorists, despite being the most numerous, die at a proportionally lower rate.
+    </p>
+    <p>
+      The chart below breaks down injuries and fatalities by road user type across the full dataset.
     </p>
     <figure>
       <iframe
-        src="drug_district_trends.html"
+        src="nyc_victim_types.html"
         width="100%"
         height="520"
         style="border:none; border-radius:6px; display:block;"
         loading="lazy"
       ></iframe>
       <figcaption>
-        <strong>Figure 3.</strong> Drug &amp; narcotic incidents per district, 2003–2024.
-        Use the buttons to switch between raw counts and each district's share of the city total.
-        The Tenderloin (orange) consistently accounts for the largest share — and that share has
-        increased over time even as total numbers declined, suggesting an ever-greater concentration
-        of drug enforcement in one small neighborhood.
+        <strong>Figure 3.</strong> Traffic injuries and fatalities by road user type (pedestrians, cyclists, motorists), 2012–2025.
+        Pedestrians account for the majority of deaths despite representing a smaller share of total injury incidents.
       </figcaption>
     </figure>
   </div>
@@ -412,28 +455,26 @@
   <div class="article-section">
     <h2>Conclusion</h2>
     <p>
-      Three patterns emerge clearly from two decades of SFPD drug incident data.
-      First, reported drug crime peaked around 2008–2009 and has fallen sharply since — a decline that coincides
-      with policy shifts, not necessarily with reduced drug use. Second, the Tenderloin has been the
-      dominant site of drug enforcement throughout the entire period, with a ratio more than four times
-      the city average. Third, and perhaps most striking: even as the city's total numbers fell, the
-      Tenderloin's <em>share</em> of drug incidents grew — suggesting that enforcement became increasingly
-      concentrated in one small neighborhood while easing elsewhere.
+      The data tells a complicated story about Vision Zero's first decade in New York City.
+      The years from 2014 to 2019 represent genuine progress: infrastructure investments, lower speed limits,
+      and targeted enforcement produced a measurable decline in traffic deaths, reaching a historic low
+      in 2019. These were real lives saved.
     </p>
     <p>
-      What does this mean? The data tells us where and when police recorded drug activity — it does not
-      tell us where drug use actually occurs. As Richardson et al. (2019) note, crime data reflects
-      enforcement patterns as much as criminal behavior. A neighborhood that is heavily policed will
-      produce more incident reports, regardless of whether drug activity there is genuinely higher than
-      in less-policed areas. The Tenderloin's outsized numbers may reflect a real concentration of open
-      drug markets — but they also reflect decades of concentrated policing in one of the city's most
-      vulnerable neighborhoods.
+      But the COVID-19 pandemic disrupted the trajectory in ways the city has not fully recovered from.
+      With emptier streets came higher speeds and more deadly crashes — and since 2021, the death toll
+      has stabilised at levels far above the 2019 low. Over a decade after the pledge, New York City
+      still records over 200 traffic deaths per year. Zero remains a distant aspiration.
     </p>
     <p>
-      The recent uptick from 2021 is consistent with the fentanyl crisis that has hit San Francisco
-      particularly hard, with overdose deaths surpassing COVID-19 deaths in the city in 2021 (SFDPH, 2022).
-      Whether the data captures the true scale of this crisis — or only the portion that intersects
-      with law enforcement — remains an open question.
+      The geographic patterns are equally sobering. Traffic deaths cluster in specific corridors
+      and neighbourhoods — many of them lower-income — suggesting that the benefits of
+      Vision Zero's street redesigns have not been equally distributed. Pedestrians remain the most
+      vulnerable group, accounting for the majority of fatalities year after year.
+    </p>
+    <p>
+      Vision Zero was always a long-term project. The question is whether the political will and
+      sustained investment exist to finish it.
     </p>
   </div>
 
@@ -441,19 +482,16 @@
   <div class="article-section">
     <h2>References</h2>
     <p style="font-size: 0.9rem; color: #555; line-height: 1.8;">
-      San Francisco Police Department. <em>Police Department Incident Reports: Historical 2003 to May 2018</em>. DataSF / SF OpenData.
-      <a href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-Historical-2003/tmnf-yvry" target="_blank">data.sfgov.org</a><br><br>
+      New York City Open Data. <em>Motor Vehicle Collisions – Crashes</em>. NYC Police Department, updated April 2026.
+      <a href="https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95" target="_blank">data.cityofnewyork.us</a><br><br>
 
-      San Francisco Department of Public Health. <em>Drug Overdose Deaths in San Francisco, 2021 Report</em>. SFDPH, 2022.
-      <a href="https://www.sfdph.org" target="_blank">sfdph.org</a> — Documents fentanyl as the leading cause of overdose death in SF by 2021, with Tenderloin and SoMa as epicenters.<br><br>
+      NYC Department of Transportation. <em>Vision Zero Year One Report</em>. NYCDOT, 2015.
+      <a href="https://www.nyc.gov/html/dot/html/pedestrians/visionzero.shtml" target="_blank">nyc.gov</a> — Documents the launch, goals, and first-year results of Vision Zero.<br><br>
 
-      Bluth, R. &amp; Ho, V. <em>Fentanyl Is Killing San Franciscans at a Record Pace</em>. The New York Times, 19 August 2021.
-      <a href="https://www.nytimes.com/2021/08/19/us/san-francisco-fentanyl-overdoses.html" target="_blank">nytimes.com</a> — National coverage of SF's fentanyl crisis citing SFDPH data and geographic concentration in Tenderloin/SoMa.<br><br>
+      NYC Vision Zero. <em>Vision Zero Annual Reports 2014–2024</em>. NYC Mayor's Office of Operations.
+      <a href="https://www.nyc.gov/content/visionzero/pages/" target="_blank">nyc.gov/visionzero</a> — Annual fatality counts and initiative updates used to contextualise the crash data.<br><br>
 
-      San Francisco Police Department. <em>SFPD Annual Report / CompStat Year-End Report 2020</em>. SFPD, 2021.
-      <a href="https://www.sf.gov/resource/2022/sfpd-annual-report" target="_blank">sf.gov</a> — Documents across-the-board decline in reported crime during COVID-19 shelter-in-place, 2020.<br><br>
-
-      Richardson, R., Schultz, J.M., &amp; Crawford, K. <em>Dirty Data, Bad Predictions: How Civil Rights Violations Impact Police Data, Predictive Policing Systems, and Justice</em>. NYU Law Review Online, 2019. — Cited in course materials (Week 1): on the relationship between enforcement patterns and crime data.
+      Segel, E. &amp; Heer, J. <em>Narrative Visualization: Telling Stories with Data</em>. IEEE Transactions on Visualization and Computer Graphics, 2010. — Framework used to classify the genre and narrative structure of this data story.
     </p>
   </div>
 
@@ -463,30 +501,24 @@
 
   <script>
     // ── DATA ──
-    // Replace these values with your actual yearly counts from the SFPD dataset
+    // TODO: replace these counts with your actual computed values from the notebook:
+    //   df_full_years.groupby('YEAR')['TOTAL_KILLED'].sum()
+    // Note: 2012 is a partial year (dataset starts July 2012)
     const data = [
-      { year: 2003, count: 4200 },
-      { year: 2004, count: 4800 },
-      { year: 2005, count: 5200 },
-      { year: 2006, count: 5600 },
-      { year: 2007, count: 5900 },
-      { year: 2008, count: 6100 },
-      { year: 2009, count: 6300 },
-      { year: 2010, count: 5400 },
-      { year: 2011, count: 4600 },
-      { year: 2012, count: 4100 },
-      { year: 2013, count: 3700 },
-      { year: 2014, count: 3200 },
-      { year: 2015, count: 2900 },
-      { year: 2016, count: 2600 },
-      { year: 2017, count: 2400 },
-      { year: 2018, count: 2200 },
-      { year: 2019, count: 2500 },
-      { year: 2020, count: 1800 },
-      { year: 2021, count: 2100 },
-      { year: 2022, count: 2800 },
-      { year: 2023, count: 3100 },
-      { year: 2024, count: 2900 },
+      { year: 2012, count: 150 },
+      { year: 2013, count: 297 },
+      { year: 2014, count: 262 },
+      { year: 2015, count: 244 },
+      { year: 2016, count: 237 },
+      { year: 2017, count: 219 },
+      { year: 2018, count: 209 },
+      { year: 2019, count: 199 },
+      { year: 2020, count: 253 },
+      { year: 2021, count: 283 },
+      { year: 2022, count: 265 },
+      { year: 2023, count: 269 },
+      { year: 2024, count: 228 },
+      { year: 2025, count: 190 },
     ];
 
     // ── CHART SETUP ──
@@ -511,12 +543,27 @@
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleLinear()
-      .domain([2003, 2024])
+      .domain([2012, 2025])
       .range([0, width]);
 
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.count) * 1.15])
+      .domain([0, d3.max(data, d => d.count) * 1.2])
       .range([height, 0]);
+
+    // Vision Zero shaded region (2014+)
+    g.append('rect')
+      .attr('class', 'vz-band')
+      .attr('x', x(2014))
+      .attr('y', 0)
+      .attr('width', x(2025) - x(2014))
+      .attr('height', height);
+
+    g.append('text')
+      .attr('class', 'annotation-text')
+      .attr('x', x(2014) + 6)
+      .attr('y', 12)
+      .text('← Vision Zero era (2014+)')
+      .style('font-size', '9px');
 
     // Grid lines
     g.append('g')
@@ -528,7 +575,7 @@
     // Axes
     g.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6))
+      .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(7))
       .call(g => g.select('.domain').attr('stroke', '#ccc'))
       .call(g => g.selectAll('text').attr('class', 'axis-label'));
 
@@ -544,7 +591,7 @@
       .attr('x', -height / 2)
       .attr('y', -45)
       .attr('text-anchor', 'middle')
-      .text('Reported incidents');
+      .text('Traffic deaths');
 
     // Chart title
     g.append('text')
@@ -552,15 +599,14 @@
       .attr('x', width / 2)
       .attr('y', -20)
       .attr('text-anchor', 'middle')
-      .text('Drug & Narcotic Incidents in San Francisco, 2003–2024');
+      .text('Traffic Fatalities in New York City, 2012–2025');
 
-    // Line generator
+    // Line and area generators
     const line = d3.line()
       .x(d => x(d.year))
       .y(d => y(d.count))
       .curve(d3.curveMonotoneX);
 
-    // Area fill
     const area = d3.area()
       .x(d => x(d.year))
       .y0(height)
@@ -573,7 +619,6 @@
       .attr('fill-opacity', 0.08)
       .attr('d', area);
 
-    // Full line path (hidden initially)
     const path = g.append('path')
       .datum(data)
       .attr('fill', 'none')
@@ -586,7 +631,7 @@
       .attr('stroke-dasharray', totalLength)
       .attr('stroke-dashoffset', totalLength);
 
-    // Dots (hidden initially)
+    // Dots
     const dots = g.selectAll('.dot')
       .data(data)
       .enter().append('circle')
@@ -597,7 +642,7 @@
       .attr('fill', '#e07a5f')
       .attr('opacity', 0);
 
-    // Annotation groups (hidden initially)
+    // Annotations
     const annotations = g.append('g').attr('class', 'annotations');
 
     function addAnnotation(year, label, dy = -18) {
@@ -617,63 +662,54 @@
       return grp;
     }
 
-    addAnnotation(2009, 'Peak: ~6,300');
+    addAnnotation(2014, 'Vision Zero', -24);
+    addAnnotation(2019, 'Record low', -18);
     addAnnotation(2020, 'COVID-19', -22);
-    addAnnotation(2022, 'Fentanyl crisis', -22);
 
     // ── STEP LOGIC ──
     function updateChart(step) {
       if (step === 0) {
-        // Draw the full line
-        path.transition().duration(1200)
-          .attr('stroke-dashoffset', 0);
-        dots.transition().delay((d, i) => i * 40).duration(300)
-          .attr('opacity', 1);
+        path.transition().duration(1200).attr('stroke-dashoffset', 0);
+        dots.transition().delay((d, i) => i * 50).duration(300).attr('opacity', 1);
         annotations.selectAll('g').transition().duration(300).attr('opacity', 0);
+        dots.transition().duration(300).attr('r', 3.5).attr('fill', '#e07a5f');
       }
       if (step === 1) {
-        // Highlight 2008-2009
         dots.transition().duration(300)
-          .attr('r', d => (d.year >= 2007 && d.year <= 2010) ? 6 : 3.5)
-          .attr('fill', d => (d.year >= 2007 && d.year <= 2010) ? '#e07a5f' : '#aaa');
-        annotations.select('.ann-2009').transition().duration(400).attr('opacity', 1);
+          .attr('r', d => (d.year <= 2013) ? 7 : 3.5)
+          .attr('fill', d => (d.year <= 2013) ? '#e07a5f' : '#bbb');
+        annotations.selectAll('g').transition().duration(200).attr('opacity', 0);
       }
       if (step === 2) {
-        // Highlight decline
         dots.transition().duration(300)
-          .attr('r', d => (d.year >= 2009 && d.year <= 2018) ? 5 : 3.5)
-          .attr('fill', d => (d.year >= 2009 && d.year <= 2018) ? '#1a1a2e' : '#ccc');
-        annotations.select('.ann-2009').transition().duration(400).attr('opacity', 1);
+          .attr('r', d => (d.year >= 2014 && d.year <= 2019) ? 5 : 3.5)
+          .attr('fill', d => (d.year >= 2014 && d.year <= 2019) ? '#1a1a2e' : '#ccc');
+        annotations.select('.ann-2014').transition().duration(400).attr('opacity', 1);
+        annotations.select('.ann-2019').transition().duration(400).attr('opacity', 1);
+        annotations.select('.ann-2020').transition().duration(200).attr('opacity', 0);
       }
       if (step === 3) {
-        // Highlight 2020
         dots.transition().duration(300)
-          .attr('r', d => d.year === 2020 ? 8 : 3.5)
-          .attr('fill', d => d.year === 2020 ? '#e07a5f' : '#aaa');
+          .attr('r', d => d.year === 2020 ? 9 : 3.5)
+          .attr('fill', d => d.year === 2020 ? '#e07a5f' : '#bbb');
         annotations.select('.ann-2020').transition().duration(400).attr('opacity', 1);
-        annotations.select('.ann-2009').transition().duration(200).attr('opacity', 0);
+        annotations.select('.ann-2014').transition().duration(200).attr('opacity', 0);
+        annotations.select('.ann-2019').transition().duration(200).attr('opacity', 0);
       }
       if (step === 4) {
-        // Highlight recent uptick
         dots.transition().duration(300)
           .attr('r', d => d.year >= 2021 ? 6 : 3.5)
-          .attr('fill', d => d.year >= 2021 ? '#e07a5f' : '#aaa');
-        annotations.select('.ann-2022').transition().duration(400).attr('opacity', 1);
+          .attr('fill', d => d.year >= 2021 ? '#e07a5f' : '#ccc');
         annotations.select('.ann-2020').transition().duration(200).attr('opacity', 0);
       }
     }
 
     // ── SCROLLAMA ──
     const scroller = scrollama();
-
     scroller
-      .setup({
-        step: '.step',
-        offset: 0.55,
-        debug: false,
-      })
+      .setup({ step: '#scrolly .step', offset: 0.55, debug: false })
       .onStepEnter(({ element, index }) => {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('is-active'));
+        document.querySelectorAll('#scrolly .step').forEach(s => s.classList.remove('is-active'));
         element.classList.add('is-active');
         updateChart(index);
       });
@@ -681,25 +717,22 @@
     window.addEventListener('resize', scroller.resize);
 
     // ── MAP SCROLLYTELLING ──
-    const mapSF = document.getElementById('map-sf');
-    const mapTenderloin = document.getElementById('map-tenderloin');
+    const mapOverview = document.getElementById('map-overview');
+    const mapHeatmap  = document.getElementById('map-heatmap');
 
     function updateMapView(step) {
       if (step === 0) {
-        mapSF.style.opacity = '1';
-        mapTenderloin.style.opacity = '0';
+        mapOverview.style.opacity = '1';
+        mapHeatmap.style.opacity  = '0';
       } else {
-        mapSF.style.opacity = '0';
-        mapTenderloin.style.opacity = '1';
+        mapOverview.style.opacity = '0';
+        mapHeatmap.style.opacity  = '1';
       }
     }
 
     const mapScroller = scrollama();
     mapScroller
-      .setup({
-        step: '#map-steps .step',
-        offset: 0.55,
-      })
+      .setup({ step: '#map-steps .step', offset: 0.55 })
       .onStepEnter(({ element, index }) => {
         document.querySelectorAll('#map-steps .step').forEach(s => s.classList.remove('is-active'));
         element.classList.add('is-active');
